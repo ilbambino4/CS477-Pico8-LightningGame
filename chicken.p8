@@ -1,12 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 36
 __lua__
+-- init
 function _init()
  //sets initial position to center
  //of the screen
  //offset by 6 for sprite size
  x=64-6
 end
+
+
+
+-->8
+-- update
 
 function _update()
  //checks for input and screen border
@@ -21,13 +27,13 @@ function _update()
 		x += 3
 	end
 end
+-->8
+-- draw
 
 function _draw()
  cls()
  spr(3,x,128-20,2,2)
 end
-
-
 __gfx__
 00000000000000000000000000000005500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000006600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
