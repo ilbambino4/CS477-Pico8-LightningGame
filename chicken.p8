@@ -58,7 +58,7 @@ function spawn_enemy(level)
 	x_cor=6
 	y_cor=16
 	for i=1,level.num_enemy do
-		if (i%10==0) then
+		if (i>1 and i%10==1) then
 			x_cor=6
 			y_cor+=12
 		end
