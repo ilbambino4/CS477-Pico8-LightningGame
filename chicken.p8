@@ -6,7 +6,16 @@ function _init()
  //sets initial position to center
  //of the screen
  //offset by 6 for sprite size
- x=64-6
+ x=64-8
+ 
+ //define enemy sprite
+ enemy_sprite = {
+ 	sx=0,
+ 	sy=32,
+ 	sw=16,
+ 	sh=16
+ }
+ 
 end
 
 
@@ -33,6 +42,29 @@ end
 function _draw()
  cls()
  spr(3,x,128-20,2,2)
+	level_1 = {
+		num_enemy = 30
+	}
+	spawn_enemy(level_1)
+end
+-->8
+-- enemy
+
+function add_enemy(x,y,sprite)
+	sspr(sprite.sx,sprite.sy,sprite.sw,sprite.sh,x,y,8,8)
+end
+
+function spawn_enemy(level)
+	x_cor=6
+	y_cor=16
+	for i=1,level.num_enemy do
+		if (i%10==0) then
+			x_cor=6
+			y_cor+=12
+		end
+		add_enemy(x_cor,y_cor,enemy_sprite)
+		x_cor+=12
+	end
 end
 __gfx__
 00000000000000000000000000000005500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
