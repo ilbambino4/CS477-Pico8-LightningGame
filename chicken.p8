@@ -1,7 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 38
 __lua__
+enemies={}
 bullets={}
+eggs={}
 
 function _init()
  //sets initial position to center
@@ -10,6 +12,7 @@ function _init()
  x=64-6
  y=128-16
  enemy_anim=0
+ enemy_attacking=0
  
  //define enemy sprite
  enemy_sprite = {
@@ -18,13 +21,20 @@ function _init()
  	sw=16,
  	sh=16
  }
- // create a table to hold enemies instances
- enemies={}
+ 
  // define level
  level_1 = {
 		num_enemy = 30
 	}
 	enemy_spawned=false
+
+ //define enemy attack sprite
+ enemy_atk = {
+ 	sx=0,
+ 	sy=48,
+ 	sw=16,
+ 	sh=16
+ }
  
  music(0,0,0)
  
@@ -84,13 +94,17 @@ end
 
 function _draw()
  cls()
-
-	if (not enemy_spawned) then
+ 
+ if (not enemy_spawned) then
  	spawn_enemy(level_1)
  else
  	update_enemy(level_1,enemies)
+ 	enemy_poop(level_1,enemies)
  end
+ 
  animate_enemy()
+ 
+ draw_enemy_atk(eggs)
  
  //checks to see if player has
  //shot
@@ -112,6 +126,7 @@ function add_enemy(x,y,index)
 	sspr(enemy_sprite.sx,enemy_sprite.sy,enemy_sprite.sw,enemy_sprite.sh,x,y,8,8)
 	add(enemies,{x=x,y=y,active=true},index)
 end
+
 //spawn enemies for the first iteration
 function spawn_enemy(level)
 	x_cor=6
@@ -126,6 +141,7 @@ function spawn_enemy(level)
 	end
 	enemy_spawned=true
 end
+
 // called after enemies spawning
 function update_enemy(level,enemies)
 	for i=1,level.num_enemy do
@@ -144,6 +160,33 @@ function animate_enemy()
 		end
 	end
 	enemy_anim+=1
+end
+
+function enemy_poop(level,e)
+	local active_enemy={}
+	for i=1,level.num_enemy do
+		if e[i].active then
+			add(active_enemy,i)
+		end
+	end
+	atk=rnd(active_enemy)
+	if enemy_attacking==45 then
+		add(eggs,{x=e[atk].x,y=e[atk].y,active=true})
+	end
+	if enemy_attacking>45 then
+		enemy_attacking=0
+	end
+	enemy_attacking+=1
+end
+
+function draw_enemy_atk(eggs)
+	size=0
+	for k,v in pairs(eggs) do
+		if v.active then
+			v.y+=2
+			sspr(enemy_atk.sx,enemy_atk.sy,enemy_atk.sw,enemy_atk.sh,v.x,v.y,8,8)
+		end		
+	end
 end
 
 //paramter b is the kind of bullet
