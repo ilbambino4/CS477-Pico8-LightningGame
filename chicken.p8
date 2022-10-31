@@ -185,6 +185,9 @@ function draw_enemy_atk(eggs)
 		if v.active then
 			v.y+=2
 			sspr(enemy_atk.sx,enemy_atk.sy,enemy_atk.sw,enemy_atk.sh,v.x,v.y,8,8)
+		end
+		if v.y>128 then
+			v.active=false
 		end		
 	end
 end
