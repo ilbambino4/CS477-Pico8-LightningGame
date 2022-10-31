@@ -9,6 +9,7 @@ function _init()
  //offset by 6 on x for sprite size
  x=64-6
  y=128-16
+ enemy_anim=0
  
  //define enemy sprite
  enemy_sprite = {
@@ -17,6 +18,13 @@ function _init()
  	sw=16,
  	sh=16
  }
+ // create a table to hold enemies instances
+ enemies={}
+ // define level
+ level_1 = {
+		num_enemy = 30
+	}
+	enemy_spawned=false
  
  music(0,0,0)
  
@@ -71,20 +79,18 @@ function _update()
 	for b in all(bullets) do
   b:update()
  end
+ 
 end
 
 function _draw()
  cls()
- 
- level_1 = {
-		num_enemy = 30
-	}
-	spawn_enemy(level_1)
- 
-	level_1 = {
-		num_enemy = 30
-	}
-	spawn_enemy(level_1)
+
+	if (not enemy_spawned) then
+ 	spawn_enemy(level_1)
+ else
+ 	update_enemy(level_1,enemies)
+ end
+ animate_enemy()
  
  //checks to see if player has
  //shot
@@ -102,10 +108,11 @@ function _draw()
  spr(3,x,y,2,2)
 end
 
-function add_enemy(x,y,sprite)
-	sspr(sprite.sx,sprite.sy,sprite.sw,sprite.sh,x,y,8,8)
+function add_enemy(x,y,index)
+	sspr(enemy_sprite.sx,enemy_sprite.sy,enemy_sprite.sw,enemy_sprite.sh,x,y,8,8)
+	add(enemies,{x=x,y=y,active=true},index)
 end
-
+//spawn enemies for the first iteration
 function spawn_enemy(level)
 	x_cor=6
 	y_cor=16
@@ -114,9 +121,29 @@ function spawn_enemy(level)
 			x_cor=6
 			y_cor+=12
 		end
-		add_enemy(x_cor,y_cor,enemy_sprite)
+		add_enemy(x_cor,y_cor,i)
 		x_cor+=12
 	end
+	enemy_spawned=true
+end
+// called after enemies spawning
+function update_enemy(level,enemies)
+	for i=1,level.num_enemy do
+		if (enemies[i].active) then
+			sspr(enemy_sprite.sx,enemy_sprite.sy,enemy_sprite.sw,enemy_sprite.sh,enemies[i].x,enemies[i].y,8,8)
+		end
+	end
+end
+
+function animate_enemy()
+	if enemy_anim>15 then
+		enemy_sprite.sx=16
+		if (enemy_anim>30) then
+			enemy_anim=0
+			enemy_sprite.sx=0
+		end
+	end
+	enemy_anim+=1
 end
 
 //paramter b is the kind of bullet
