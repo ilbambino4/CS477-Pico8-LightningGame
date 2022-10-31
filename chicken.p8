@@ -10,6 +10,14 @@ function _init()
  x=64-6
  y=128-16
  
+ //define enemy sprite
+ enemy_sprite = {
+ 	sx=0,
+ 	sy=32,
+ 	sw=16,
+ 	sh=16
+ }
+ 
  music(0,0,0)
  
  //vars used for shooting
@@ -68,6 +76,16 @@ end
 function _draw()
  cls()
  
+ level_1 = {
+		num_enemy = 30
+	}
+	spawn_enemy(level_1)
+ 
+	level_1 = {
+		num_enemy = 30
+	}
+	spawn_enemy(level_1)
+ 
  //checks to see if player has
  //shot
  if (shooting) then
@@ -82,6 +100,23 @@ function _draw()
  end
  
  spr(3,x,y,2,2)
+end
+
+function add_enemy(x,y,sprite)
+	sspr(sprite.sx,sprite.sy,sprite.sw,sprite.sh,x,y,8,8)
+end
+
+function spawn_enemy(level)
+	x_cor=6
+	y_cor=16
+	for i=1,level.num_enemy do
+		if (i>1 and i%10==1) then
+			x_cor=6
+			y_cor+=12
+		end
+		add_enemy(x_cor,y_cor,enemy_sprite)
+		x_cor+=12
+	end
 end
 
 //paramter b is the kind of bullet
