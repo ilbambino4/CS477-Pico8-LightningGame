@@ -1,12 +1,29 @@
 pico-8 cartridge // http://www.pico-8.com
 version 38
 __lua__
+bullets={}
+
 function _init()
  //sets initial position to center
  //of the screen
- //offset by 6 for sprite size
+ //offset by 6 on x for sprite size
  x=64-6
+ y=128-16
+ 
  music(0,0,0)
+ 
+ //vars used for shooting
+ shooting=false
+ shot=false
+ timer=0
+ 
+ //players bullet type, 1-3
+ --[[
+ 	1=normal shot
+ 	2=speed shot
+ 	3=double shot
+ ]]
+ btype=3
 end
 
 function _update()
@@ -21,13 +38,109 @@ function _update()
 	if btn(➡️) and x < 128-16 then
 		x += 3
 	end
+	
+	//controls how fast and often
+	//a player can shoot
+	if timer == 0 then
+		if btn(5) then
+			if shot==false then
+				shot=true
+				shooting=true
+			else
+				shooting=false
+				//delay on shooting
+				timer=3
+			end
+		else
+		 shot=false
+		 shooting=false
+		end
+	else
+		timer-=1
+	end
+	
+	//updates all bullets in list
+	for b in all(bullets) do
+  b:update()
+ end
 end
 
 function _draw()
  cls()
- spr(3,x,128-20,2,2)
+ 
+ //checks to see if player has
+ //shot
+ if (shooting) then
+  //passes the players bullet
+  //type
+  shoot(btype)
+ end
+ 
+ //draws all bullets in list
+ for b in all(bullets) do
+  b:draw()
+ end
+ 
+ spr(3,x,y,2,2)
 end
 
+//paramter b is the kind of bullet
+//being fired 1-3
+function shoot(b)
+ //creates bullets and sets
+ //update and draw function for
+ //each bullet added
+	add(bullets,{
+	 //bullet position
+  x=x+4,
+  y=y,
+  
+  //draws bullets
+  draw=function(self)
+  	//checks for default bullet
+			if (b==1) then
+				spr(33,self.x,self.y,1,1)
+				
+			//checks for speed shot
+			elseif (b==2) then
+				spr(34,self.x,self.y,1,1)
+				
+			//checks for double shot
+			elseif (b==3) then
+				spr(35,self.x+7,self.y,1,1)
+				spr(35,self.x-6,self.y,1,1)
+			end
+  end,
+  
+  //updates bullets
+  update=function(self)
+ 		//checks for default bullet
+			if (b==1) then
+				self.y-=3
+				if self.y<-8
+	   then
+	    del(bullets,self)
+	   end
+	   
+			//checks for speed shot
+			elseif (b==2) then
+				self.y-=6
+				if self.y<-8
+	   then
+	    del(bullets,self)
+	   end
+				
+			//checks for double shot
+			elseif (b==3) then
+				self.y-=4
+				if self.y<-8
+	   then
+	    del(bullets,self)
+	   end
+			end
+  end
+ })
+end
 
 __gfx__
 00000000000000000000000000000005500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
