@@ -51,7 +51,10 @@ function _init()
  	2=speed shot
  	3=double shot
  ]]
- btype=3
+ btype=1
+ 
+ //dead enemy counter
+ de=0
 end
 
 function _update()
@@ -92,7 +95,11 @@ function _update()
   b:update()
  end
  
- check_if_hit()
+ if (de < 30) then 
+ 	check_if_hit()
+ end
+ 
+ hit_detection()
  
 end
 
@@ -108,17 +115,27 @@ function _draw()
 		print("game over!")
 		return
 	end
+	
+	if de>=30 then
+	 cls()
+		print("congratulations!!!")
+		return
+	end
  
  if (not enemy_spawned) then
  	spawn_enemy(level_1)
  else
- 	update_enemy(level_1,enemies)
- 	enemy_poop(level_1,enemies)
+  if (de < 30) then
+	 	update_enemy(level_1,enemies)
+	 	enemy_poop(level_1,enemies)
+ 	end
  end
  
  animate_enemy()
  
- draw_enemy_atk(eggs)
+ if (de < 30) then
+ 	draw_enemy_atk(eggs)
+ end
  
  //checks to see if player has
  //shot
@@ -136,9 +153,9 @@ function _draw()
  spr(3,x,y,2,2)
 end
 
-function add_enemy(x,y,index)
+function add_enemy(ex,ey,index)
 	sspr(enemy_sprite.sx,enemy_sprite.sy,enemy_sprite.sw,enemy_sprite.sh,x,y,8,8)
-	add(enemies,{x=x,y=y,active=true},index)
+	add(enemies,{x=ex,y=ey,active=true},index)
 end
 
 //spawn enemies for the first iteration
@@ -184,10 +201,10 @@ function enemy_poop(level,e)
 		end
 	end
 	atk=rnd(active_enemy)
-	if enemy_attacking==45 then
+	if enemy_attacking==18 then
 		add(eggs,{x=e[atk].x,y=e[atk].y,active=true})
 	end
-	if enemy_attacking>45 then
+	if enemy_attacking>18 then
 		enemy_attacking=0
 	end
 	enemy_attacking+=1
@@ -232,21 +249,35 @@ function shoot(b)
 	 //bullet position
   x=x+4,
   y=y,
+  ox=0,
+  oy=0,
+  h=0,
+  w=0,
   
   //draws bullets
   draw=function(self)
   	//checks for default bullet
 			if (b==1) then
 				spr(33,self.x,self.y,1,1)
+				self.h=8
+				self.w=7
+				self.ox=self.x
+				self.oy=self.x
 				
 			//checks for speed shot
 			elseif (b==2) then
 				spr(34,self.x,self.y,1,1)
+				self.h=8
+				self.w=7
+				self.ox=self.x+2
+				self.oy=self.x
 				
 			//checks for double shot
 			elseif (b==3) then
 				spr(35,self.x+7,self.y,1,1)
 				spr(35,self.x-6,self.y,1,1)
+				self.h=8
+				self.w=3
 			end
   end,
   
@@ -280,6 +311,29 @@ function shoot(b)
  })
 end
 
+
+function hit_detection()
+	for a in all(bullets) do
+	 for b in all(enemies) do
+	  if
+		 (a.x > b.x+8) 
+			or
+			(a.x+8 < b.x) 
+			or
+			(a.y > b.y+8) 
+			or
+			(a.y+8 < b.y) 
+			then
+			else
+				if (b.active) then
+				 de+=1
+				 b.active=false
+				 del(bullets,a)
+			 end
+			end
+	 end
+ end
+end
 __gfx__
 00000000000000000000000000000005500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000006600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
