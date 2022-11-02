@@ -55,6 +55,8 @@ function _init()
  
  //dead enemy counter
  de=0
+ 
+ hit=false
 end
 
 function _update()
@@ -120,6 +122,7 @@ function _draw()
 	
 	if de>=30 then
 	 cls()
+	 pal()
 		print("congratulations!!!")
 		return
 	end
@@ -153,6 +156,13 @@ function _draw()
  end
  
  spr(3,x,y,2,2)
+ if (hit) then
+  hit=false
+  pal(5,8)
+  pal(6,8)
+ else
+  pal()
+ end
 end
 
 function add_enemy(ex,ey,index)
@@ -234,6 +244,7 @@ function check_if_hit()
 					deli(hp,lives)
 					lives-=1
 					v.active=false
+					hit=true
 				end
 			end
 		end
