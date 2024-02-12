@@ -1,6 +1,5 @@
-# 477Lightning
+# CS477 Game Development
 
-# Note from Will(thinhtun2000) on sprites
+Lightning Game
 
-Sprite sheet 1: Player's
-Sprite sheet 2: Enemies
+  This is a small game created in Pico-8.
